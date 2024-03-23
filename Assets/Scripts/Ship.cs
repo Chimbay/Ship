@@ -7,7 +7,7 @@ public class Ship : MonoBehaviour
     // Storing the component of rigidBody2D
     private Rigidbody2D rb2d;
     // Direction of thrust
-    Vector2 thrustDirction;
+    Vector2 thrustDirection;
     // Setting thrust force
     const float thrustForce = 300;
     // Step 4 - Storing ship collider
@@ -16,13 +16,26 @@ public class Ship : MonoBehaviour
     // Step 5 - Initialize ship rotation
     const float rotateDegreesPerSecond = 80;
 
+    // Step 6
+    // Save axis input
+    float rotationInput;
+    // Save ship's rotation around the Z-axis
+    float shipRotationZ;
+    // Save angle
+    float shipRotationRadians;
+    // Bool to check if spacebar was pressed or not
+    bool pressed = false;
+
     // Start is called before the first frame update
     void Start()
     {
         // Initializing the component to rb2d
         rb2d = GetComponent<Rigidbody2D>();
-        // Initializing direction of thrust
-        thrustDirction = new Vector2(1, 0);
+
+        // Updating it with new direction for Step 6
+        //// Initializing direction of thrust
+        //thrustDirction = new Vector2(1, 0);
+
         // Initializing ship collider
         cc2d = GetComponent<CircleCollider2D>();
     }
@@ -30,9 +43,15 @@ public class Ship : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float rotationInput = Input.GetAxis("Rotate");
-
-        Debug.Log(rotationInput);
+        // Save axis input
+        rotationInput = Input.GetAxis("Rotate");
+        // Extract ship's rotation around the Z-axis
+        shipRotationZ = transform.eulerAngles.z;
+        // Convert angle from degrees to radians
+        shipRotationRadians = shipRotationZ * Mathf.Deg2Rad;
+        // Determine X and Y components of the thrust direction
+        thrustDirection.x = Mathf.Cos(shipRotationRadians);
+        thrustDirection.y = Mathf.Sin(shipRotationRadians);
 
         // Check if there's any input
         if (rotationInput != 0)
@@ -54,10 +73,9 @@ public class Ship : MonoBehaviour
     void FixedUpdate()
     {
         // Input check for spacebar
-        if (Input.GetKeyDown("space"))
+        if (Input.GetKeyDown("space") || pressed)
         {
-            Debug.Log("space key was pressed");
-            rb2d.AddForce(thrustDirction * thrustForce, ForceMode2D.Force);
+            rb2d.AddForce(thrustDirection * thrustForce, ForceMode2D.Force);
         }
     }
 
