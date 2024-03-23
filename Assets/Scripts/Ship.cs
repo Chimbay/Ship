@@ -13,6 +13,9 @@ public class Ship : MonoBehaviour
     // Step 4 - Storing ship collider
     private CircleCollider2D cc2d;
 
+    // Step 5 - Initialize ship rotation
+    const float rotateDegreesPerSecond = 80;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +30,24 @@ public class Ship : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        float rotationInput = Input.GetAxis("Rotate");
+
+        Debug.Log(rotationInput);
+
+        // Check if there's any input
+        if (rotationInput != 0)
+        {
+            // Calculate rotation amount based on input and time
+            float rotationAmount = rotateDegreesPerSecond * Time.deltaTime;
+            // Reverse rotation amount if input is negative
+            if (rotationInput < 0)
+            {
+                rotationAmount *= -1;
+            }
+
+            // Apply rotation
+            transform.Rotate(Vector3.forward, rotationAmount);
+        }
     }
 
     // Unlike update, FixedUpdate() updates physics in a consistent manner (like Time.
